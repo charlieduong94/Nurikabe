@@ -3,12 +3,22 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import model.Block;
 import model.Board;
 import model.NurikabeSolver;
 //Notes:
@@ -25,6 +35,7 @@ public class Nurikabe extends JFrame {
     JPanel topPanel;
     JButton startButton;
     JTextArea textArea;
+    JButton importButton;
     boolean started;
     Board b;
     NurikabeSolver solver;
@@ -36,6 +47,57 @@ public class Nurikabe extends JFrame {
         topPanel = new JPanel();
         startButton = new JButton("Start Game");
         textArea = new JTextArea("Design Mode");
+        importButton = new JButton("Import");
+        importButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser chooser = new JFileChooser();
+                FileNameExtensionFilter extensionFilter = new FileNameExtensionFilter("Text Files", "txt");
+                chooser.setFileFilter(extensionFilter);
+                int returnVal = chooser.showOpenDialog(null);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    System.out.println("Approved");
+                    /**
+                     * I need to figure a way to validate these files
+                     */
+                    try {
+                        Scanner scanner = new Scanner(new FileInputStream(chooser.getSelectedFile()));
+                        String temp = scanner.nextLine().trim();
+                        int sliderVal = Integer.parseInt(temp);
+                        b.setSliderValue(sliderVal);
+                        int y = 0;
+                        Block[][] newGrid = new Block[sliderVal][sliderVal];
+                        while (scanner.hasNext()) {
+                            temp = scanner.nextLine();
+                            String[] stringArray = temp.trim().split("\\s");
+                            for (int x = 0; x < sliderVal; x++) {
+                                newGrid[x][y] = new Block(((int) (x * (b.getWidth()) / sliderVal)), (int) (y * (b.getHeight() / sliderVal)),
+                                        (int) (b.getWidth() / sliderVal), (int) (b.getHeight() / sliderVal), x, y);
+                                int blockVal = Integer.parseInt(stringArray[x]);
+                                if (blockVal != 0) {
+                                    newGrid[x][y].setLandSource(blockVal);
+                                    newGrid[x][y].setParent(newGrid[x][y]);
+                                }
+                                else{
+                                    newGrid[x][y].setBlank();
+                                }
+                            }
+                            y++;
+                            System.out.println("");
+                        }
+                        // if nothing wrong happend
+                        System.out.println("got here");
+                        b.setGrid(newGrid);
+                        b.repaint();
+                    } catch (FileNotFoundException ex) {
+                        Logger.getLogger(Nurikabe.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }
+            }
+
+        });
         started = false;
         solver = null;
         b = new Board(this);
@@ -47,10 +109,12 @@ public class Nurikabe extends JFrame {
         slider.setMinimum(5);
         slider.setValue(5);
         slider.setMaximum(25);
+        b.setSliderValue(5);
         //mainPanel.setLayout(new BorderLayout());
         this.add(mainPanel);
         //mainPanel.add(topPanel, BorderLayout.NORTH);
         textArea.setEditable(false);
+        topPanel.add(importButton);
         topPanel.add(textArea);
         topPanel.add(slider);
         topPanel.add(startButton);
@@ -75,6 +139,10 @@ public class Nurikabe extends JFrame {
 
     public void setText(String text) {
         textArea.setText(text);
+    }
+
+    public JButton getImportButton() {
+        return importButton;
     }
 
     public JTextArea getTextArea() {

@@ -8,15 +8,35 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 import view.MyMouseListener;
+
 public class Board extends JPanel {
 
     int sliderValue;
     double width, height;
     Nurikabe nurikabe = null;
     Block[][] grid = null;
-    ArrayList<Integer> sourceNumberList; 
-   ArrayList<ArrayList<Block>> sourceChildren;
+    ArrayList<Integer> sourceNumberList;
+    ArrayList<ArrayList<Block>> sourceChildren;
     boolean initialized = false;
+
+    public void setGrid(Block[][] newGrid) {
+        sliderValue = newGrid[0].length;
+        grid = newGrid;
+//        for (int i = 0; i < sliderValue; i++) {
+//            for (int j = 0; j < sliderValue; j++) {
+//                grid[i][j].set(newGrid[i][j]);
+//            }
+//        }
+    }
+
+    public boolean checkWithinBounds(int x, int y) {
+        if (x >= sliderValue || x < 0 || y >= sliderValue || y < 0) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
 
     public ArrayList<Integer> getSourceNumberList() {
         return sourceNumberList;
@@ -45,9 +65,11 @@ public class Board extends JPanel {
     public int getSliderValue() {
         return sliderValue;
     }
-    public void setSliderValue(int value){
+
+    public void setSliderValue(int value) {
         sliderValue = value;
     }
+
     public Board(Nurikabe n) {
         nurikabe = n;
         width = this.getWidth();
@@ -71,7 +93,7 @@ public class Board extends JPanel {
         sourceNumberList = new ArrayList<Integer>();
         sourceChildren = new ArrayList<ArrayList<Block>>();
         this.grid = b.grid.clone();
-		//for(int i = 0; i < sliderValue; i++){
+        //for(int i = 0; i < sliderValue; i++){
         //	for(int j = 0; j < sliderValue; j++){
         //	this.grid[i][j] = b.grid[i][j];
         //}
@@ -84,7 +106,7 @@ public class Board extends JPanel {
         width = this.getWidth();
         height = this.getHeight();
         System.out.println("painting board");
-        Graphics2D g2d = (Graphics2D)g;
+        Graphics2D g2d = (Graphics2D) g;
         updateBoard(g2d);
         redrawBoard(g2d);
         createGrid(g2d);
@@ -98,13 +120,13 @@ public class Board extends JPanel {
             g.drawLine(0, (int) (i * height / sliderValue), (int) width, (int) (i * height / sliderValue));
         }
     }
-    
+
     public void createTiles() {
         grid = new Block[sliderValue][sliderValue];
         for (int i = 0; i < sliderValue; i++) {			// row
             for (int j = 0; j < sliderValue; j++) {		// amount in row
                 grid[i][j] = new Block((int) (i * (width / sliderValue)), (int) (j * (height / sliderValue)),
-                        (int) (width / sliderValue), (int) (height / sliderValue));
+                        (int) (width / sliderValue), (int) (height / sliderValue), i, j);
             }
         }
     }
@@ -117,8 +139,8 @@ public class Board extends JPanel {
         sourceChildren.clear();
         sourceNumberList.clear();
 
-        for (int j = 0; j < sliderValue; j++) {			// row
-            for (int i = 0; i < sliderValue; i++) {		// amount in row				
+        for (int i = 0; i < sliderValue; i++) {			// row
+            for (int j = 0; j < sliderValue; j++) {		// amount in row				
                 grid[i][j].x = (int) (i * width / sliderValue);
                 grid[i][j].y = (int) (j * height / sliderValue);
                 grid[i][j].width = (int) (width / sliderValue) + 2;
@@ -130,8 +152,8 @@ public class Board extends JPanel {
     }
 
     public void redrawBoard(Graphics g) {
-        for (int j = 0; j < sliderValue; j++) {			// row
-            for (int i = 0; i < sliderValue; i++) {		// amount in row				
+        for (int i = 0; i < sliderValue; i++) {			// row
+            for (int j = 0; j < sliderValue; j++) {		// amount in row				
                 grid[i][j].x = (int) (i * width / sliderValue);
                 grid[i][j].y = (int) (j * height / sliderValue);
                 grid[i][j].width = (int) (width / sliderValue) + 2;
@@ -219,6 +241,7 @@ public class Board extends JPanel {
 
         for (int i = 0; i < sliderValue; i++) {
             for (int j = 0; j < sliderValue; j++) {
+
                 grid[i][j].setValidity(true);
                 grid[i][j].setCompleteness(false);
                 grid[i][j].setChild(false);

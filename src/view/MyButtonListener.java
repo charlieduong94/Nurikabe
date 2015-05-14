@@ -26,9 +26,10 @@ public class MyButtonListener implements ActionListener {
             popup.setVisible(true);
             popup.showMessageDialog(nurikabe, "Start Playing! \nLeft Click on a tile to fill it.\nRight Click to mark the tile as known.", "Game Started", 1);
             nurikabe.getStartButton().setText("Solve");
+            nurikabe.getImportButton().setEnabled(false);
         } else {
 
-            if (!b) {
+            //if (!b) {
 
                 Runnable r = new Runnable() {
 
@@ -43,11 +44,11 @@ public class MyButtonListener implements ActionListener {
                 r.run();
                 b = true;
 
-            } else {
+            //} else {
 
                 //nurikabe.solver.undo();
                 //nurikabe.solver.checkTrappedWater();
-            }
+           // }
 
             //		nurikabe.solver.solveKnown();
         }

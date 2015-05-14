@@ -3,16 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/run/media/charlie/CDDE-978A/Nurikabe/src/model/NurikabeSolver.java</file>
-            <file>file:/run/media/charlie/CDDE-978A/Nurikabe/src/view/MyButtonListener.java</file>
-            <file>file:/run/media/charlie/CDDE-978A/Nurikabe/src/model/Board.java</file>
-            <file>file:/run/media/charlie/CDDE-978A/Nurikabe/src/model/Block.java</file>
-            <file>file:/run/media/charlie/CDDE-978A/Nurikabe/src/view/Application.java</file>
-            <file>file:/run/media/charlie/CDDE-978A/Nurikabe/src/view/GridSlider.java</file>
-            <file>file:/run/media/charlie/CDDE-978A/Nurikabe/src/view/MySliderListener.java</file>
-            <file>file:/run/media/charlie/CDDE-978A/Nurikabe/src/view/MyMouseListener.java</file>
-            <file>file:/run/media/charlie/CDDE-978A/Nurikabe/src/view/MyComponentListener.java</file>
-            <file>file:/run/media/charlie/CDDE-978A/Nurikabe/src/view/Nurikabe.java</file>
+            <file>file:/home/charlie/Documents/Research/Nurikabe/src/view/MyButtonListener.java</file>
+            <file>file:/home/charlie/Documents/Research/Nurikabe/src/view/MyMouseListener.java</file>
+            <file>file:/home/charlie/Documents/Research/Nurikabe/src/model/Block.java</file>
+            <file>file:/home/charlie/Documents/Research/Nurikabe/src/model/Board.java</file>
+            <file>file:/home/charlie/Documents/Research/Nurikabe/src/view/Application.java</file>
+            <file>file:/home/charlie/Documents/Research/Nurikabe/src/view/Nurikabe.java</file>
+            <file>file:/home/charlie/Documents/Research/Nurikabe/src/view/MySliderListener.java</file>
+            <file>file:/home/charlie/Documents/Research/Nurikabe/src/view/MyComponentListener.java</file>
+            <file>file:/home/charlie/Documents/Research/Nurikabe/src/model/NurikabeSolver.java</file>
         </group>
     </open-files>
 </project-private>
