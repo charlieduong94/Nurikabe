@@ -106,10 +106,9 @@ public class Board extends JPanel {
         width = this.getWidth();
         height = this.getHeight();
         System.out.println("painting board");
-        Graphics2D g2d = (Graphics2D) g;
-        updateBoard(g2d);
-        redrawBoard(g2d);
-        createGrid(g2d);
+        updateBoard(g);
+        redrawBoard(g);
+        createGrid(g);
 
     }
 
