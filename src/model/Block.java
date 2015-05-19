@@ -17,7 +17,7 @@ public class Block extends Rectangle {
     boolean child;
     boolean valid;
     Block parent;
-    int sourceNum;
+    int sourceNum, currentSourceVal;
     MouseListener listener;
 
     Font f = null;
@@ -33,6 +33,7 @@ public class Block extends Rectangle {
         child = false;
         valid = true;
         sourceNum = 0;
+        currentSourceVal = 0;
     }
 
     public Block(int xpos, int ypos, double w, double h, int gridX, int gridY) {
@@ -61,19 +62,6 @@ public class Block extends Rectangle {
         return parent;
     }
 
-    public boolean isAdjacentTo(Block b) {
-        boolean result = false;
-        if (((this.gridX - 1) == b.getXOnGrid()) && this.gridY == b.getYOnGrid()) {
-            result = true;
-        } else if (((this.gridX + 1) == b.getXOnGrid()) && this.gridY == b.getYOnGrid()) {
-            result = true;
-        } else if ((this.gridX == b.getXOnGrid()) && (this.gridY - 1) == b.getYOnGrid()) {
-            result = true;
-        } else if ((this.gridX == b.getXOnGrid()) && (this.gridY + 1) == b.getYOnGrid()) {
-            result = true;
-        }
-        return result;
-    }
 
     public void paintComponent(Graphics g) {
 		//super.paintComponent(g);
@@ -142,6 +130,7 @@ public class Block extends Rectangle {
         landStem = false;
         landSource = true;
         sourceNum = num;
+        currentSourceVal = 1;
         complete = false;
         child = false;
         parent = this;
@@ -166,6 +155,7 @@ public class Block extends Rectangle {
         sourceNum = 0;
         complete = false;
         child = false;
+        parent = null;
     }
 
     public void setWater() {
@@ -185,7 +175,12 @@ public class Block extends Rectangle {
     public void setCompleteness(boolean b) {
         complete = b;
     }
-
+    public void setCurrentSourceVal(int val){
+        currentSourceVal = val;
+    }
+    public int getCurrentSourceVal(){
+        return currentSourceVal;
+    }
     public boolean isLandSource() {
         boolean b = false;
         if (!blank && !water && !landStem && landSource) {
@@ -288,6 +283,7 @@ public class Block extends Rectangle {
             return false;
         }
         return equals;
-
     }
+
+    
 }

@@ -563,9 +563,6 @@ public class NurikabeSolver {
     int count = 0;
 
     public void solveKnown() {
-        //fillKnownLand();
-        //surroundAllComplete();
-
         try {
             surroundAllComplete();
             board.updateBoard(board.getGraphics());
@@ -579,10 +576,14 @@ public class NurikabeSolver {
             Thread.sleep(1000);
             board.updateBoard(board.getGraphics());
             expandAllWater();
+            Thread.sleep(1000);
+            board.updateBoard(board.getGraphics());
+
             //checkLastLandStemPlacement();
-            //check2x2Area();
+            check2x2Area();
+            surroundAllComplete();
             board.repaint();
-            Thread.sleep(3000);
+            Thread.sleep(1000);
         } catch (InterruptedException ex) {
             Logger.getLogger(NurikabeSolver.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -791,41 +792,43 @@ public class NurikabeSolver {
                 }
             }
         }
+        /*
+         for (int i = 0; i < possibleLand.size(); i++) {
+         int count = 0;
+         if (!possibleLand.get(0).isLandSource()) {
+         Block b = possibleLand.get(0);
+         possibleLand.remove(0);
+         /*
+         for (int j = 0; j < possibleLand.size(); j++) {
+         if (possibleLand.get(j) == b) {
+         //add checkAvailiablePath here to determine if safe to add
+         count++;
+         //b.setLandStem();
+         }
+         }
+         */
+        /*
+         if (!possibleLand.contains(b)) {
+         System.out.println(" Found " + b.getXOnGrid() + ", " + b.getYOnGrid());
+         b.setLandStem();
+         }
+         */
+        /*
+         if (count == 1) {
+         System.out.println(" Found " + b.getXOnGrid() + ", " + b.getYOnGrid());
+         b.setLandStem();
+         }
+         */
+        //possibleLand.add(b);
+        /*
+         } else {
+         Block b = possibleLand.get(0);
+         possibleLand.remove(0);
+         possibleLand.add(b);
+         }
 
-        for (int i = 0; i < possibleLand.size(); i++) {
-            int count = 0;
-            if (!possibleLand.get(0).isLandSource()) {
-                Block b = possibleLand.get(0);
-                possibleLand.remove(0);
-                /*
-                 for (int j = 0; j < possibleLand.size(); j++) {
-                 if (possibleLand.get(j) == b) {
-                 //add checkAvailiablePath here to determine if safe to add
-                 count++;
-                 //b.setLandStem();
-                 }
-                 }
-                 */
-                /*
-                 if (!possibleLand.contains(b)) {
-                 System.out.println(" Found " + b.getXOnGrid() + ", " + b.getYOnGrid());
-                 b.setLandStem();
-                 }
-                 */
-                /*
-                 if (count == 1) {
-                 System.out.println(" Found " + b.getXOnGrid() + ", " + b.getYOnGrid());
-                 b.setLandStem();
-                 }
-                 */
-                //possibleLand.add(b);
-            } else {
-                Block b = possibleLand.get(0);
-                possibleLand.remove(0);
-                possibleLand.add(b);
-            }
-
-        }
+         }
+         */
         possibleLand.clear();
         board.repaint();
     }
@@ -833,51 +836,59 @@ public class NurikabeSolver {
     /**
      * Updated algorithm that marks potential land stems using bfs
      */
-    public void markPotentialLandStems(Block b) {
-        Deque<Block> queue = new ArrayDeque<>();
-        Deque<Integer> counter = new ArrayDeque<>();
-        Deque<Block> discovered = new ArrayDeque<>();
-        queue.add(b);
-        counter.add(b.getSourceNum());
-        discovered.add(b);
-        while (!queue.isEmpty()) {
-            // currently there is no limiting factor
-            Block block = queue.removeFirst();
-            int count = counter.removeFirst();
-            if (count >= 0) {
-                System.out.println("BFS: " + block.getXOnGrid() + ", " + block.getYOnGrid() + ", " + count);
-                if ((block.getXOnGrid() - 1) >= 0 && board.getGrid()[block.getXOnGrid() - 1][block.getYOnGrid()].isBlank()
-                        && !discovered.contains(board.getGrid()[block.getXOnGrid() - 1][block.getYOnGrid()])) {
-                    System.out.println("added");
-                    queue.add(board.getGrid()[block.getXOnGrid() - 1][block.getYOnGrid()]);
-                    counter.add(count - 1);
-                    discovered.add(board.getGrid()[block.getXOnGrid() - 1][block.getYOnGrid()]);
-                }
-                if ((block.getXOnGrid() + 1) < board.sliderValue && board.getGrid()[block.getXOnGrid() + 1][block.getYOnGrid()].isBlank()
-                        && !discovered.contains(board.getGrid()[block.getXOnGrid() + 1][block.getYOnGrid()])) {
-                    System.out.println("added");
-                    queue.add(board.getGrid()[block.getXOnGrid() + 1][block.getYOnGrid()]);
-                    counter.add(count - 1);
-                    discovered.add(board.getGrid()[block.getXOnGrid() + 1][block.getYOnGrid()]);
-                }
-                if ((block.getYOnGrid() - 1) >= 0 && board.getGrid()[block.getXOnGrid()][block.getYOnGrid() - 1].isBlank()
-                        && !discovered.contains(board.getGrid()[block.getXOnGrid()][block.getYOnGrid() - 1])) {
-                    System.out.println("added");
-                    queue.add(board.getGrid()[block.getXOnGrid()][block.getYOnGrid() - 1]);
-                    counter.add(count - 1);
-                    discovered.add(board.getGrid()[block.getXOnGrid()][block.getYOnGrid() - 1]);
-                }
-                if ((block.getYOnGrid() + 1) < board.sliderValue && board.getGrid()[block.getXOnGrid()][block.getYOnGrid() + 1].isBlank()
-                        && !discovered.contains(board.getGrid()[block.getXOnGrid()][block.getYOnGrid() + 1])) {
-                    System.out.println("added");
-                    queue.add(board.getGrid()[block.getXOnGrid()][block.getYOnGrid() + 1]);
-                    counter.add(count - 1);
-                    discovered.add(board.getGrid()[block.getXOnGrid()][block.getYOnGrid() + 1]);
+    public void markPotentialLandStems(Block origin) {
+        ArrayList<Block> totalDiscovered = new ArrayList<Block>();
+        Deque<Block> discovered = traverseBlocks(origin, BlockType.LAND, totalDiscovered);
+        possibleLand.addAll(discovered);
+        ArrayDeque<Block> totalSurroundingBlanks = getSurroundingBlanks(origin, totalDiscovered);
+        possibleLand.addAll(totalSurroundingBlanks);
+        int count = origin.getCurrentSourceVal() + 1;
+        System.out.println(count + " is the current source val at origin " + origin.getXOnGrid() + ", " + origin.getYOnGrid());
+        System.out.println(origin.getSourceNum() + " is the source num at the same origin");
+        System.out.println("There are " + totalSurroundingBlanks.size() + " surrounding Blanks");
+        ArrayDeque<Block> potentialBlocks = new ArrayDeque<>();
+        ArrayDeque<Block> initialSet = new ArrayDeque<>(totalSurroundingBlanks);
+        ArrayDeque<Block> endSet = new ArrayDeque<>();
+        // marks blocks as water depending on whether the block is adjacent to the 
+        for (Block b : totalSurroundingBlanks) {
+            if (isAdjacentToFreeLand(b, origin)) {
+                b.setLandStem();
+                System.out.println("Setting Land Stem at " + b.gridX + ", " + b.gridY);
+            } else if (isAdjacentToIsland(b, origin)) {
+                b.setWater();
+            }
+            //try{
+                board.updateBoard(board.getGraphics());
+            //    Thread.sleep(1000);
+            //}
+            //catch(Exception ex){
+                
+            //}
+        }
+        while (count < origin.getSourceNum()) {
+            while (!initialSet.isEmpty()) {
+                for (Block b : getSurroundingBlocks(initialSet.removeFirst())) {
+                    if (b.isBlank() && !totalSurroundingBlanks.contains(b)) {
+                        if (!isAdjacentToIsland(b, origin)) {
+                            totalSurroundingBlanks.add(b);
+                            endSet.add(b);
+                            potentialBlocks.add(b);
+                            possibleLand.add(b);
+                        }
+                    }
                 }
             }
+            initialSet.addAll(endSet);
+            endSet.clear();
+            System.out.println("currentCount == " + count);
+            System.out.println("Initial Set size = " + initialSet.size());
+            for (Block b : initialSet) {
+                System.out.println("block in initial set at " + b.gridX + ". " + b.gridY);
+            }
+            count++;
         }
-        for (Block block : discovered) {
-            possibleLand.add(block);
+        for (Block b : potentialBlocks) {
+            System.out.println("Potential Block at " + b.getXOnGrid() + ", " + b.getYOnGrid());
         }
     }
 
@@ -897,71 +908,10 @@ public class NurikabeSolver {
     }
 
     public void surroundComplete(Block origin, ArrayList<Block> totalDiscovered) {
-        Deque<Block> queue = new ArrayDeque<>();
-        Deque<Block> discovered = new ArrayDeque<>(); //discovered landstems
-        queue.add(origin);
-        discovered.add(origin);
-        System.out.println("Origin: " + origin.getXOnGrid() + ", " + origin.getYOnGrid());
-        while (!queue.isEmpty()) {
-            Block block = queue.removeFirst();
-            ArrayList<Block> surroundingBlocks = new ArrayList<>();
-            if (board.checkWithinBounds(block.getXOnGrid() - 1, block.getYOnGrid())) {
-                surroundingBlocks.add(board.getGrid()[block.getXOnGrid() - 1][block.getYOnGrid()]);
-            }
-            if (board.checkWithinBounds(block.getXOnGrid() + 1, block.getYOnGrid())) {
-                surroundingBlocks.add(board.getGrid()[block.getXOnGrid() + 1][block.getYOnGrid()]);
-            }
-            if (board.checkWithinBounds(block.getXOnGrid(), block.getYOnGrid() - 1)) {
-                surroundingBlocks.add(board.getGrid()[block.getXOnGrid()][block.getYOnGrid() - 1]);
-            }
-            if (board.checkWithinBounds(block.getXOnGrid(), block.getYOnGrid() + 1)) {
-                surroundingBlocks.add(board.getGrid()[block.getXOnGrid()][block.getYOnGrid() + 1]);
-            }
-            for (Block b : surroundingBlocks) {
-                if (b != null) {
-                    if ((b.isLandStem() || b.isLandSource()) && b.getParent() == origin.getParent() && b.isComplete() && !discovered.contains(b)) {
-                        queue.add(b);
-                        discovered.add(b);
-                        System.out.println("origin : " + origin.getXOnGrid() + ", " + origin.getYOnGrid());
-                        System.out.println("landStem : " + b.getXOnGrid() + ", " + origin.getYOnGrid());
-                        System.out.println(queue);
-                        System.out.println(discovered);
-                    }
-                }
-            }
-
-        }
-        totalDiscovered.addAll(discovered);
-        ArrayList<Block> totalSurroundingBlanks = new ArrayList<>();
-        while (!discovered.isEmpty()) { // for each landstem that was discovered AKA "Connected"
-            Block block = discovered.removeFirst();
-            ArrayList<Block> surroundingBlocks = new ArrayList<>();
-            if (board.checkWithinBounds(block.getXOnGrid() - 1, block.getYOnGrid())) {
-                surroundingBlocks.add(board.getGrid()[block.getXOnGrid() - 1][block.getYOnGrid()]);
-            }
-            if (board.checkWithinBounds(block.getXOnGrid() + 1, block.getYOnGrid())) {
-                surroundingBlocks.add(board.getGrid()[block.getXOnGrid() + 1][block.getYOnGrid()]);
-            }
-            if (board.checkWithinBounds(block.getXOnGrid(), block.getYOnGrid() - 1)) {
-                surroundingBlocks.add(board.getGrid()[block.getXOnGrid()][block.getYOnGrid() - 1]);
-            }
-            if (board.checkWithinBounds(block.getXOnGrid(), block.getYOnGrid() + 1)) {
-                surroundingBlocks.add(board.getGrid()[block.getXOnGrid()][block.getYOnGrid() + 1]);
-            }
-            for (Block b : surroundingBlocks) {
-                if (b.isBlank() && !totalSurroundingBlanks.contains(b)) {
-                    totalSurroundingBlanks.add(b);
-
-                }
-            }
-        }
-        System.out.println(origin.gridX + " " + origin.gridY + " source num" + origin.sourceNum);
-        for (Block b : totalSurroundingBlanks) {
-
+        for (Block b : getSurroundingBlanks(origin, totalDiscovered)) {
             b.setWater();
             System.out.println("Setting to surrounding blank to water at " + b.getXOnGrid() + ", " + b.getYOnGrid());
         }
-
     }
 
     public void fillCompleteBlockSurroundings(int i, int j, ArrayList<Block> m) {
@@ -1017,15 +967,18 @@ public class NurikabeSolver {
                     if (!possibleLand.contains(block)) {
                         block.setWater();
                     }
-                    int count = 0;
-                    for (Block b : getSurroundingBlocks(block)) {
-                        if (b.isWater()) {
-                            count++;
-                        }
-                    }
-                    if (count >= 3) {
-                        block.setWater();
-                    }
+                    /*
+                     int count = 0;
+                     for (Block b : getSurroundingBlocks(block)) {
+                     if (b.isWater()) {
+                     count++;
+                     }
+                     }
+                    
+                     if (count >= 3) {
+                     block.setWater();
+                     }
+                     */
                 }
             }
         }
@@ -1148,7 +1101,10 @@ public class NurikabeSolver {
                 Block temp = board.getGrid()[i][j];
                 if (!totalDiscovered.contains(temp) && (temp.isLandSource() || temp.isLandStem())
                         && !temp.isComplete() && temp.getParent() != null) {
-                    expandChunk(temp, totalDiscovered);
+                    ArrayDeque<Block> surroundingBlanks = getSurroundingBlanks(temp, totalDiscovered);
+                    if (surroundingBlanks.size() == 1) {
+                        surroundingBlanks.getFirst().setLandStem();
+                    }
                 }
             }
         }
@@ -1165,7 +1121,7 @@ public class NurikabeSolver {
                 Block b = board.getGrid()[i][j];
                 if (!totalDiscovered.contains(b) && b.isBlank()) {
                     Deque<Block> discovered = traverseBlocks(b, BlockType.BLANK, totalDiscovered);
-                    if (discovered.size() == 1) {
+                    if (discovered.size() == 1 && !isAdjacentToOtherLand(b)) {
                         b.setWater();
                     }
                 }
@@ -1189,7 +1145,7 @@ public class NurikabeSolver {
         // get origin type
         while (!queue.isEmpty()) {
             Block block = queue.removeFirst();
-            ArrayList<Block> surroundingBlocks = getSurroundingBlocks(block);
+            ArrayDeque<Block> surroundingBlocks = getSurroundingBlocks(block);
             for (Block b : surroundingBlocks) {
                 if (b != null && !discovered.contains(b)) {
                     boolean valid = false;
@@ -1228,22 +1184,31 @@ public class NurikabeSolver {
             for (int j = 0; j < board.sliderValue; j++) {
                 Block temp = board.getGrid()[i][j];
                 if (temp.isWater() && !totalDiscovered.contains(temp)) {
-                    expandChunk(temp, totalDiscovered);
-                    try {
-                        Thread.sleep(5000);
-                    } catch (Exception ex) {
-
+                    ArrayDeque<Block> surroundingBlocks = getSurroundingBlanks(temp, totalDiscovered);
+                    if (surroundingBlocks.size() == 1 && getBlankCount() != 1) {
+                        surroundingBlocks.getFirst().setWater();
                     }
                     board.updateBoard(board.getGraphics());
                 }
-
             }
         }
     }
 
+    public int getBlankCount() {
+        ArrayList<Block> totalDiscovered = new ArrayList<>();
+        for (int i = 0; i < board.sliderValue; i++) {
+            for (int j = 0; j < board.sliderValue; j++) {
+                Block temp = board.getGrid()[i][j];
+                if (temp.isBlank()) {
+                    traverseBlocks(temp, BlockType.BLANK, totalDiscovered);
+                }
+            }
+        }
+        return totalDiscovered.size();
+    }
+
     public void findPossibleMoves(int i, int j, ArrayList<Block> m, ArrayDeque<Block> stack) {
         m.add(board.grid[i][j]);
-
         findPossibleMovesTail(i - 1, j, m, stack);
         findPossibleMovesTail(i + 1, j, m, stack);
         findPossibleMovesTail(i, j - 1, m, stack);
@@ -1270,18 +1235,18 @@ public class NurikabeSolver {
      * @param origin
      * @param totalDiscovered
      */
-    public void expandChunk(Block origin, ArrayList<Block> totalDiscovered) {
+    public ArrayDeque<Block> getSurroundingBlanks(Block origin, ArrayList<Block> totalDiscovered) {
         BlockType blockType;
         // may be able to just pass in a variable instead...
         if (origin.isBlank()) {
-            return;
+            return null;
         } else if (origin.isWater()) {
             blockType = BlockType.WATER;
         } else {
             blockType = BlockType.LAND;
         }
         Deque<Block> discovered = traverseBlocks(origin, blockType, totalDiscovered);
-        ArrayList<Block> totalSurroundingBlanks = new ArrayList<>();
+        ArrayDeque<Block> totalSurroundingBlanks = new ArrayDeque<>();
         if (blockType == BlockType.WATER) {
             System.out.println(discovered.size());
         }
@@ -1291,7 +1256,7 @@ public class NurikabeSolver {
         }
         while (!discovered.isEmpty()) { // for each landstem that was discovered AKA "Connected"
             Block block = discovered.removeFirst();
-            ArrayList<Block> surroundingBlocks = getSurroundingBlocks(block);
+            ArrayDeque<Block> surroundingBlocks = getSurroundingBlocks(block);
             for (Block b : surroundingBlocks) {
                 // not quite ready yet
                 if (b != null && !totalSurroundingBlanks.contains(b) && b.isBlank()) {
@@ -1299,21 +1264,30 @@ public class NurikabeSolver {
                 }
             }
         }
-        if (totalSurroundingBlanks.size() == 1) {
-            switch (blockType) {
-                case WATER:
-                    totalSurroundingBlanks.get(0).setWater();
-                    break;
-                case LAND:
-                    totalSurroundingBlanks.get(0).setLandStem();
-                    break;
-            }
-            totalDiscovered.add(totalSurroundingBlanks.get(0));
-        }
+        return totalSurroundingBlanks;
+        /*
+         if (totalSurroundingBlanks.size() == 1) {
+         switch (blockType) {
+         case WATER:
+         totalSurroundingBlanks.get(0).setWater();
+         break;
+         case LAND:
+         totalSurroundingBlanks.get(0).setLandStem();
+         break;
+         }
+         totalDiscovered.add(totalSurroundingBlanks.get(0));
+         }
+         */
     }
 
-    public ArrayList<Block> getSurroundingBlocks(Block block) {
-        ArrayList<Block> surroundingBlocks = new ArrayList<>();
+    /**
+     * Gets the surrounding blanks of a single block
+     *
+     * @param block
+     * @return
+     */
+    public ArrayDeque<Block> getSurroundingBlocks(Block block) {
+        ArrayDeque<Block> surroundingBlocks = new ArrayDeque<>();
         if (board.checkWithinBounds(block.getXOnGrid() - 1, block.getYOnGrid())) {
             surroundingBlocks.add(board.getGrid()[block.getXOnGrid() - 1][block.getYOnGrid()]);
         }
@@ -1327,6 +1301,33 @@ public class NurikabeSolver {
             surroundingBlocks.add(board.getGrid()[block.getXOnGrid()][block.getYOnGrid() + 1]);
         }
         return surroundingBlocks;
+    }
+
+    public boolean isAdjacentToOtherLand(Block block) {
+        for (Block b : getSurroundingBlocks(block)) {
+            if ((b.isLandStem() || b.isLandSource())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isAdjacentToIsland(Block block, Block otherIslandBlock) {
+        for (Block b : getSurroundingBlocks(block)) {
+            if ((b.isLandStem() || b.isLandSource()) && b.isChild() && (b.getParent() != otherIslandBlock.getParent())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isAdjacentToFreeLand(Block block, Block otherIslandBlock) {
+        for (Block b : getSurroundingBlocks(block)) {
+            if ((b.isLandStem() || b.isLandSource()) && !b.isChild() && b.getParent() == null && !b.isComplete()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public int checkVoid(int i, int j) {

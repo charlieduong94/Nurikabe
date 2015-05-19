@@ -22,11 +22,6 @@ public class Board extends JPanel {
     public void setGrid(Block[][] newGrid) {
         sliderValue = newGrid[0].length;
         grid = newGrid;
-//        for (int i = 0; i < sliderValue; i++) {
-//            for (int j = 0; j < sliderValue; j++) {
-//                grid[i][j].set(newGrid[i][j]);
-//            }
-//        }
     }
 
     public boolean checkWithinBounds(int x, int y) {
@@ -92,12 +87,7 @@ public class Board extends JPanel {
         sliderValue = nurikabe.getSlider().getValue();
         sourceNumberList = new ArrayList<Integer>();
         sourceChildren = new ArrayList<ArrayList<Block>>();
-        this.grid = b.grid.clone();
-        //for(int i = 0; i < sliderValue; i++){
-        //	for(int j = 0; j < sliderValue; j++){
-        //	this.grid[i][j] = b.grid[i][j];
-        //}
-        //	}	
+        this.grid = b.grid.clone();	
     }
 
     @Override
@@ -109,7 +99,6 @@ public class Board extends JPanel {
         updateBoard(g);
         redrawBoard(g);
         createGrid(g);
-
     }
 
     public void createGrid(Graphics g) {				//might not need this
@@ -133,11 +122,9 @@ public class Board extends JPanel {
     public void updateBoard(Graphics g) {
         resetMarkedValidity();
         retrieveLandStatus();
-
         checkLandSourceCollision();
         sourceChildren.clear();
         sourceNumberList.clear();
-
         for (int i = 0; i < sliderValue; i++) {			// row
             for (int j = 0; j < sliderValue; j++) {		// amount in row				
                 grid[i][j].x = (int) (i * width / sliderValue);
@@ -147,7 +134,6 @@ public class Board extends JPanel {
                 grid[i][j].paintComponent(g);
             }
         }
-
     }
 
     public void redrawBoard(Graphics g) {
@@ -160,7 +146,6 @@ public class Board extends JPanel {
                 grid[i][j].paintComponent(g);
             }
         }
-
     }
 
     public int countLand(int i, int j, ArrayList<Block> m, Block parent) {
@@ -190,7 +175,6 @@ public class Board extends JPanel {
                     sourceNumberList.add(countLand(i, j, marked, grid[i][j]));
                     sourceChildren.add(marked);
                 }
-
             }
         }
     }
@@ -199,21 +183,22 @@ public class Board extends JPanel {
         for (int i = 0; i < sourceChildren.size(); i++) {
             int count = 0;
             for (int j = 0; j < sourceChildren.get(i).size(); j++) {
-
                 if (sourceChildren.get(i).get(j).isLandSource()) {
                     count++;
                     if (sourceNumberList.get(i) == sourceChildren.get(i).get(j).sourceNum) {
                         for (int k = 0; k < sourceChildren.get(i).size(); k++) {
                             sourceChildren.get(i).get(k).setCompleteness(true);
                         }
-
                     }
                     if (sourceNumberList.get(i) > sourceChildren.get(i).get(j).sourceNum) {
                         for (int k = 0; k < sourceChildren.get(i).size(); k++) {
                             sourceChildren.get(i).get(k).setValidity(false);
                         }
                         count = 0;
-
+                    }
+                    // temp fix change how things work later on
+                    for (int k = 0; k < sourceChildren.get(i).size(); k++) {
+                        sourceChildren.get(i).get(k).setCurrentSourceVal(sourceNumberList.get(i));
                     }
                 }
                 if ((count > 1)) {
@@ -221,9 +206,7 @@ public class Board extends JPanel {
                         sourceChildren.get(i).get(k).setValidity(false);
                     }
                     count = 0;
-
                 }
-
             }
         }
     }
