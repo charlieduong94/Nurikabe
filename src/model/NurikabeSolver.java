@@ -565,29 +565,29 @@ public class NurikabeSolver {
 
     public void solveKnown() {
         //try {
-            surroundAllComplete();
-            board.updateBoard(board.getGraphics());
-            checkSidesAndCorners();
-            fillKnownWater();
-            board.updateBoard(board.getGraphics());
-            //Thread.sleep(1000);
-            fillWaters();
-            board.updateBoard(board.getGraphics());
-            expandAllLand();
-            //Thread.sleep(1000);
-            board.updateBoard(board.getGraphics());
-            connectLand();
-            //Thread.sleep(1000);
-            board.updateBoard(board.getGraphics());
-            expandAllWater();
-            //Thread.sleep(1000);
-            board.updateBoard(board.getGraphics());
+        surroundAllComplete();
+        board.updateBoard(board.getGraphics());
+        checkSidesAndCorners();
+        board.updateBoard(board.getGraphics());
+        fillKnownWater();
+        board.updateBoard(board.getGraphics());
+        //Thread.sleep(1000);
+        fillWaters();
+        board.updateBoard(board.getGraphics());
+        expandAllLand();
+        //Thread.sleep(1000);
+        board.updateBoard(board.getGraphics());
+        //connectLand();
+   
+        expandAllWater();
+        //Thread.sleep(1000);
+        board.updateBoard(board.getGraphics());
 
-            //checkLastLandStemPlacement();
-            check2x2Area();
-            surroundAllComplete();
-            board.repaint();
-            //Thread.sleep(1000);
+        //checkLastLandStemPlacement();
+        check2x2Area();
+        surroundAllComplete();
+        board.repaint();
+        //Thread.sleep(1000);
         //} catch (InterruptedException ex) {
         //    Logger.getLogger(NurikabeSolver.class.getName()).log(Level.SEVERE, null, ex);
         //}
@@ -796,43 +796,6 @@ public class NurikabeSolver {
                 }
             }
         }
-        /*
-         for (int i = 0; i < possibleLand.size(); i++) {
-         int count = 0;
-         if (!possibleLand.get(0).isLandSource()) {
-         Block b = possibleLand.get(0);
-         possibleLand.remove(0);
-         /*
-         for (int j = 0; j < possibleLand.size(); j++) {
-         if (possibleLand.get(j) == b) {
-         //add checkAvailiablePath here to determine if safe to add
-         count++;
-         //b.setLandStem();
-         }
-         }
-         */
-        /*
-         if (!possibleLand.contains(b)) {
-         System.out.println(" Found " + b.getXOnGrid() + ", " + b.getYOnGrid());
-         b.setLandStem();
-         }
-         */
-        /*
-         if (count == 1) {
-         System.out.println(" Found " + b.getXOnGrid() + ", " + b.getYOnGrid());
-         b.setLandStem();
-         }
-         */
-        //possibleLand.add(b);
-        /*
-         } else {
-         Block b = possibleLand.get(0);
-         possibleLand.remove(0);
-         possibleLand.add(b);
-         }
-
-         }
-         */
         possibleLand.clear();
         board.repaint();
     }
@@ -847,6 +810,7 @@ public class NurikabeSolver {
         ArrayDeque<Block> totalSurroundingBlanks = getSurroundingBlanks(origin, totalDiscovered);
         possibleLand.addAll(totalSurroundingBlanks);
         int count = origin.getCurrentSourceVal() + 1;
+        System.out.println("Origin Source num = " + origin.sourceNum);
         System.out.println(count + " is the current source val at origin " + origin.getXOnGrid() + ", " + origin.getYOnGrid());
         System.out.println(origin.getSourceNum() + " is the source num at the same origin");
         System.out.println("There are " + totalSurroundingBlanks.size() + " surrounding Blanks");
@@ -854,34 +818,28 @@ public class NurikabeSolver {
         ArrayDeque<Block> initialSet = new ArrayDeque<>(totalSurroundingBlanks);
         ArrayDeque<Block> endSet = new ArrayDeque<>();
         // marks blocks as water depending on whether the block is adjacent to the 
-
+        ArrayList<Block> removalList = new ArrayList<>();
         for (Block b : totalSurroundingBlanks) {
-            /*if (adjacentLand.size() > 0) {
-             //b.setLandStem();
-             //System.out.println("Setting Land Stem at " + b.gridX + ", " + b.gridY);
-             //totalSurroundingBlanks.remove(b);
-
-             } else*/ if (isAdjacentToIsland(b, origin)) {
+            if (isAdjacentToIsland(b, origin)) {
                 b.setWater();
-                totalSurroundingBlanks.remove(b);
+                removalList.add(b);
             }
 
-            //try{
             board.updateBoard(board.getGraphics());
-            //    Thread.sleep(1000);
-            //}
-            //catch(Exception ex){
-
-            //}
+            
         }
-
+        
+        totalSurroundingBlanks.removeAll(removalList);
+        potentialBlocks.addAll(totalSurroundingBlanks);
+        possibleLand.addAll(totalSurroundingBlanks);
         while (count < origin.getSourceNum()) {
             while (!initialSet.isEmpty()) {
                 for (Block b : getSurroundingBlocks(initialSet.removeFirst())) {
-                    if (b.isBlank() && !totalSurroundingBlanks.contains(b)) {
+                    if ((b.isBlank() || (b.isLandStem() && b.getParent() == null))
+                            && !totalSurroundingBlanks.contains(b)) {
                         if (!isAdjacentToIsland(b, origin)) {
                             totalSurroundingBlanks.add(b);
-                            endSet.add(b);
+                            endSet.add(b); 
                             potentialBlocks.add(b);
                             possibleLand.add(b);
                         }
@@ -890,12 +848,37 @@ public class NurikabeSolver {
             }
             initialSet.addAll(endSet);
             endSet.clear();
-            System.out.println("currentCount == " + count);
+            System.out.println("currentCount == " + count + ", current source val =  " + origin.currentSourceVal);
+            System.out.println("PotentialBlocks size = " + potentialBlocks.size());
             System.out.println("Initial Set size = " + initialSet.size());
             for (Block b : initialSet) {
                 System.out.println("block in initial set at " + b.gridX + ". " + b.gridY);
             }
             count++;
+        }
+        // this is an issue
+        // the goal is to have the puzzle find how many spaces it can move
+        // if it is limited to a space that is exactly the amount of blocks it can have,
+        // it will fill each of those spaces.
+        System.out.println("******************************************************");
+        System.out.println("******************************************************");
+        System.out.println("Source Num here is " + origin.getSourceNum());
+        System.out.println("current source val is " + origin.getCurrentSourceVal());
+        System.out.println("potential blocks size = " + potentialBlocks.size());
+        System.out.println("******************************************************");
+        System.out.println("******************************************************");
+        for(Block b : potentialBlocks){
+            System.out.println(b.getXOnGrid() + ", " + b.getYOnGrid());
+        }
+        if(origin.getSourceNum() == (origin.getCurrentSourceVal() + potentialBlocks.size())){
+            System.out.println("I BROKE HERE");
+            for(Block b : potentialBlocks){
+                if(!origin.isComplete()){
+                    b.setLandStem();
+                    board.updateBoard(board.getGraphics());
+                    break;
+                }
+            }
         }
         
     }
@@ -907,9 +890,6 @@ public class NurikabeSolver {
         ArrayDeque<Block> totalSurroundingBlanks = getSurroundingBlanks(origin, totalDiscovered);
         possibleLand.addAll(totalSurroundingBlanks);
         int count = origin.getCurrentSourceVal() + 1;
-        System.out.println(count + " is the current source val at origin " + origin.getXOnGrid() + ", " + origin.getYOnGrid());
-        System.out.println(origin.getSourceNum() + " is the source num at the same origin");
-        System.out.println("There are " + totalSurroundingBlanks.size() + " surrounding Blanks");
         ArrayDeque<Block> potentialBlocks = new ArrayDeque<>();
         ArrayDeque<Block> initialSet = new ArrayDeque<>(totalSurroundingBlanks);
         ArrayDeque<Block> endSet = new ArrayDeque<>();
@@ -917,7 +897,7 @@ public class NurikabeSolver {
         while (count < origin.getSourceNum()) {
             while (!initialSet.isEmpty()) {
                 for (Block b : getSurroundingBlocks(initialSet.removeFirst())) {
-                    if ((b.isLandStem() && b.isChild()) || b.isBlank() && !totalSurroundingBlanks.contains(b)) {
+                    if ((b.isLandStem() && !b.isChild()) || (b.isBlank() && !totalSurroundingBlanks.contains(b))) {
                         if (!isAdjacentToIsland(b, origin)) {
                             totalSurroundingBlanks.add(b);
                             endSet.add(b);
@@ -929,8 +909,6 @@ public class NurikabeSolver {
             }
             initialSet.addAll(endSet);
             endSet.clear();
-            System.out.println("currentCount == " + count);
-            System.out.println("Initial Set size = " + initialSet.size());
             count++;
         }
         return potentialBlocks;
@@ -980,7 +958,6 @@ public class NurikabeSolver {
             for (int j = 0; j < board.sliderValue; j++) {
                 if (board.grid[i][j].isLandSource() && !board.grid[i][j].isComplete()) {
                     ArrayList<Block> marked = new ArrayList<Block>();
-                    //markPotentialLandStems(i, j, marked, board.grid[i][j].sourceNum, 0, false, board.grid[i][j]);
                     markPotentialLandStems(board.getGrid()[i][j]);
                     sourceChildren.add(marked);
                 }
@@ -1140,13 +1117,13 @@ public class NurikabeSolver {
         for (int i = 0; i < board.sliderValue; i++) {
             for (int j = 0; j < board.sliderValue; j++) {
                 Block temp = board.getGrid()[i][j];
-                if (!totalDiscovered.contains(temp) && (temp.isLandSource())
-                        && !temp.isComplete() && temp.getParent() != null) {
-
+                if (!totalDiscovered.contains(temp) && (temp.isLandSource() || temp.isLandStem())
+                        && !temp.isComplete()) {
                     ArrayDeque<Block> surroundingBlanks = getSurroundingBlanks(temp, totalDiscovered);
                     System.out.println("SurroundingBlanks size = " + surroundingBlanks.size() + " around " + temp.gridX + ", " + temp.gridY);
                     if (surroundingBlanks.size() == 1) {
                         surroundingBlanks.getFirst().setLandStem();
+                        totalDiscovered.add(surroundingBlanks.getFirst());
                     }
                 }
             }
@@ -1155,46 +1132,52 @@ public class NurikabeSolver {
     }
 
     public void connectLand() {
-        
+
         ArrayList<Block> totalDiscovered = new ArrayList<Block>();
         ArrayDeque<Block> possibleBridges = new ArrayDeque<Block>();
-        ArrayDeque<ArrayList<Block>> freeLandSets = new ArrayDeque<>();
+        ArrayList<ArrayList<Block>> freeLandSets = new ArrayList<>();
         for (int i = 0; i < board.sliderValue; i++) {
             for (int j = 0; j < board.sliderValue; j++) {
                 Block temp = board.getGrid()[i][j];
                 if (!totalDiscovered.contains(temp) && (temp.isLandSource())
                         && !temp.isComplete() && temp.getParent() != null) {
                     board.updateBoard(board.getGraphics());
+                    System.out.println("Block at position: " + temp.getXOnGrid() + ", " + temp.getYOnGrid());
+                    System.out.println("Block's source num = " + temp.getSourceNum());
+
                     for (Block b : getAllReachableBlocks(temp)) {
+                        System.out.println("Reachable block at: " + b.getXOnGrid() + ", " + b.getYOnGrid());
                         ArrayList<Block> freeLand = getAdjacentFreeLand(b);
-                        if (freeLand.size() > 0) {
+                        if (freeLand.size() == 1) {
                             possibleBridges.add(b);
                             freeLandSets.add(freeLand);
                         }
                     }
+
                 }
             }
         }
-        // fix this portion, nearly there!!!
+        // fix this portion, issue is that 
         for (Block b : possibleBridges) {
             int adjacentCount = 0;
-            for (Block free : freeLandSets.removeFirst()) {
-                if (getAdjacentFreeLand(b).contains(free)) {
-                    adjacentCount++;
+            for (ArrayList<Block> set : freeLandSets) {
+                for (Block free : set) {
+                    if (getAdjacentFreeLand(b).contains(free)) {
+                        adjacentCount++;
+                    }
+                }
+                if (adjacentCount == 1) {
+                    b.setLandStem();
                 }
             }
-            if (adjacentCount == 1) {
-                b.setLandStem();
-            }
-
+            surroundAllComplete();
         }
-        surroundAllComplete();
     }
 
-/**
- * Fills all blank spaces using the traverseBlanks BFS algorithm
- */
-public void fillWaters() {
+    /**
+     * Fills all blank spaces using the traverseBlanks BFS algorithm
+     */
+    public void fillWaters() {
         ArrayList<Block> totalDiscovered = new ArrayList<>();
         for (int i = 0; i < board.getSliderValue(); i++) {
             for (int j = 0; j < board.getSliderValue(); j++) {
@@ -1246,7 +1229,7 @@ public void fillWaters() {
                                 valid = true;
                             }
                             break;
-                       
+
                     }
                     if (valid) {
                         queue.add(b);
@@ -1394,9 +1377,9 @@ public void fillWaters() {
         return false;
     }
 
-    public boolean isAdjacentToIsland(Block block, Block otherIslandBlock) {
+    public boolean isAdjacentToIsland(Block block, Block origin) {
         for (Block b : getSurroundingBlocks(block)) {
-            if ((b.isLandStem() || b.isLandSource()) && b.isChild() && (b.getParent() != otherIslandBlock.getParent())) {
+            if ((b.isLandStem() || b.isLandSource()) && b.isChild() && (b.getParent() != origin.getParent())) {
                 return true;
             }
         }
