@@ -564,33 +564,30 @@ public class NurikabeSolver {
     int count = 0;
 
     public void solveKnown() {
-        //try {
-        surroundAllComplete();
-        board.updateBoard(board.getGraphics());
-        checkSidesAndCorners();
-        board.updateBoard(board.getGraphics());
-        fillKnownWater();
-        board.updateBoard(board.getGraphics());
-        //Thread.sleep(1000);
-        fillWaters();
-        board.updateBoard(board.getGraphics());
-        expandAllLand();
-        //Thread.sleep(1000);
-        board.updateBoard(board.getGraphics());
-        //connectLand();
-   
-        expandAllWater();
-        //Thread.sleep(1000);
-        board.updateBoard(board.getGraphics());
-
-        //checkLastLandStemPlacement();
-        check2x2Area();
-        surroundAllComplete();
-        board.repaint();
-        //Thread.sleep(1000);
-        //} catch (InterruptedException ex) {
-        //    Logger.getLogger(NurikabeSolver.class.getName()).log(Level.SEVERE, null, ex);
-        //}
+        try {
+            // this setup needs to stay the same
+            fillWaters();
+            board.updateBoard(board.getGraphics());Thread.sleep(1000);
+            fillKnownWater();
+            board.repaint();
+            surroundAllComplete();
+            board.updateBoard(board.getGraphics());Thread.sleep(1000);
+             check2x2Area();
+            board.updateBoard(board.getGraphics());Thread.sleep(1000);
+            checkSidesAndCorners();
+            board.updateBoard(board.getGraphics());Thread.sleep(1000);
+            //Thread.sleep(1000);
+            expandAllLand();
+            //Thread.sleep(1000);
+            board.updateBoard(board.getGraphics());Thread.sleep(1000);
+            expandAllWater();
+            //Thread.sleep(1000);
+            board.updateBoard(board.getGraphics());Thread.sleep(1000);
+            //checkLastLandStemPlacement();
+            
+        } catch (InterruptedException ex) {
+            Logger.getLogger(NurikabeSolver.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 
